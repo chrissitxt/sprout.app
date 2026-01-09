@@ -1,0 +1,18 @@
+{
+  "short_name": "Sprout",
+  "name": "Sprout",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "id": "/?source=pwa",
+  "start_url": "/?source=pwa",
+  "background_color": "#F1F0E8",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#F1F0E8",
+  "description": "A lightweight and private vegan journey tracker."
+}
