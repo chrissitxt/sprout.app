@@ -1,11 +1,11 @@
-const CACHE_NAME = 'sprout-v0.3';
+const CACHE_NAME = 'sprout-v0.4';
 const ASSETS = [
-  '/',
-  '/index.html',
-  '/style.css?v=0.3',
-  '/script.js?v=0.3',
-  '/manifest.json',
-  '/icon-512.png'
+  './',
+  './index.html',
+  './style.css?v=0.4',
+  './script.js?v=0.4',
+  './manifest.json',
+  './icon-512.png'
 ];
 
 self.addEventListener('install', (e) => {
@@ -17,22 +17,28 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then((cacheNames) => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            return caches.delete(cache);
-          }
+        keys.map((key) => {
+          if (key !== CACHE_NAME) return caches.delete(key);
         })
       );
     })
   );
 });
 
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(event.request, { ignoreSearch: true }).then((response) => {
+        const fetchPromise = fetch(event.request).then((networkResponse) => {
+          if (networkResponse.status === 200) {
+            cache.put(event.request, networkResponse.clone());
+          }
+          return networkResponse;
+        }).catch(() => response);
+        return response || fetchPromise;
+      });
     })
   );
 });

@@ -8,11 +8,11 @@
       "sizes": "512x512"
     }
   ],
-  "id": "/?source=pwa",
-  "start_url": "/?source=pwa",
+  "id": "./?source=pwa",
+  "start_url": "./index.html?source=pwa",
   "background_color": "#F1F0E8",
   "display": "standalone",
-  "scope": "/",
+  "scope": "./",
   "theme_color": "#F1F0E8",
   "description": "A lightweight and private vegan journey tracker."
 }
