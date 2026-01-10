@@ -1,9 +1,9 @@
-const CACHE_NAME = 'sprout-v0.4';
+const CACHE_NAME = 'sprout-v0.5';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=0.4',
-  './script.js?v=0.4',
+  './style.css?v=0.5',
+  './script.js?v=0.5',
   './manifest.json',
   './icon-512.png'
 ];
