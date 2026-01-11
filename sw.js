@@ -1,10 +1,10 @@
 // service worker for sprout
-const CACHE_NAME = 'sprout-v0.6';
+const CACHE_NAME = 'sprout-v0.4';
 const ASSETS = [
   './',
   './index.html',
   './manifest.json',
-  './icon-512.png'
+  './icon-512.webp'
 ];
 
 // cache assets on install

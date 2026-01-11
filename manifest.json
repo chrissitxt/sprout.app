@@ -1,10 +1,10 @@
 {
-  "short_name": "sprout",
-  "name": "sprout",
+  "short_name": "Sprout",
+  "name": "Sprout",
   "icons": [
     {
-      "src": "icon-512.png",
-      "type": "image/png",
+      "src": "icon-512.webp",
+      "type": "image/webp",
       "sizes": "512x512"
     }
   ],
