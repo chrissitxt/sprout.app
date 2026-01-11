@@ -13,10 +13,287 @@
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wdth,wght@8..144,25..151,100..1000&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,400..700,0..1,-50..200" />
         <link rel="manifest" href="manifest.json">
-        <link rel="stylesheet" href="style.css?v=0.5">
+        <style>
+:root {
+    /* light theme (matcha latte) */
+    --bg-color: #F1F0E8;
+    --text-main: #2C3E2E;
+    --text-muted: #5F6F62;
 
+    --primary: #4A6741;
+    --primary-glow: rgba(74, 103, 65, 0.4);
+
+    --surface: rgba(255, 255, 255, 0.65);
+    --surface-border: rgba(255, 255, 255, 0.8);
+    --shadow: rgba(44, 62, 46, 0.08);
+
+    --day-empty-bg: rgba(44, 62, 46, 0.1);
+    --day-empty-border: rgba(255, 255, 255, 0.5);
+
+    /* status colors */
+    --c-vegan: #4A6741;
+    --c-vegan-bg: #D6E6D2;
+    --c-veggie: #E0C879;
+    --c-veggie-bg: #F9F3D8;
+    --c-meat: #D16D66;
+    --c-meat-bg: #F2DCDA;
+
+    /* metrics */
+    --radius-lg: 28px;
+    --radius-md: 18px;
+    --radius-sm: 12px;
+}
+
+[data-theme="dark"] {
+    /* dark theme (midnight garden) */
+    --bg-color: #111411;
+    --text-main: #E3E8E3;
+    --text-muted: #8F9E92;
+
+    --primary: #9BC595;
+    --primary-glow: rgba(155, 197, 149, 0.25);
+
+    --surface: rgba(30, 36, 30, 0.7);
+    --surface-border: rgba(255, 255, 255, 0.1);
+    --shadow: rgba(0, 0, 0, 0.5);
+
+    --day-empty-bg: rgba(255, 255, 255, 0.08);
+    --day-empty-border: rgba(255, 255, 255, 0.1);
+
+    /* status colors */
+    --c-vegan: #9BC595;
+    --c-vegan-bg: rgba(155, 197, 149, 0.15);
+    --c-veggie: #F0D98F;
+    --c-veggie-bg: rgba(240, 217, 143, 0.15);
+    --c-meat: #E68A82;
+    --c-meat-bg: rgba(230, 138, 130, 0.15);
+}
+
+/* reset & base */
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline-color: var(--primary); }
+
+body {
+    margin: 0;
+    font-family: 'Google Sans Flex';
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    line-height: 1.5;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+}
+
+/* background ambient glow */
+.bg-glow {
+    position: fixed; inset: 0; z-index: -1;
+    background: radial-gradient(circle at 10% 20%, var(--primary-glow), transparent 50%),
+                radial-gradient(circle at 90% 80%, var(--primary-glow), transparent 50%);
+    filter: blur(60px); opacity: 0.6;
+    transition: background 0.5s ease;
+}
+
+/* layout */
+.app-wrapper {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* header */
+.main-header { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; }
+.logo-row { display: flex; align-items: center; gap: 8px; }
+.logo-icon { font-size: 28px; }
+.logo-text { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin: 0; }
+.slogan { font-size: 13px; font-weight: 500; color: var(--text-muted); margin: 2px 0 0 4px; }
+
+.header-controls { display: flex; gap: 8px; }
+.icon-btn {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    color: var(--text-main); padding: 10px; border-radius: 50%;
+    cursor: pointer; box-shadow: 0 4px 12px var(--shadow);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: grid; place-items: center;
+}
+.icon-btn:hover { transform: scale(1.1); }
+.icon-btn:active { transform: scale(0.95); }
+
+/* cards */
+.card {
+    background: var(--surface);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 8px 32px var(--shadow);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+}
+
+/* insight card */
+.insight-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.pill {
+    background: var(--text-main); color: var(--bg-color);
+    padding: 6px 12px; border-radius: 100px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.timer-text { font-family: 'Google Sans Flex'; font-size: 12px; font-weight: 600; opacity: 0.6; }
+.quote-text { font-size: 17px; font-weight: 600; margin: 0; line-height: 1.4; }
+
+.source-link {
+    display: inline-flex; align-items: center; gap: 6px; margin-top: 16px;
+    font-size: 12px; font-weight: 700; color: var(--primary);
+    text-decoration: none; padding: 6px 12px; margin-left: -6px; border-radius: 8px;
+    transition: background 0.2s, transform 0.2s;
+}
+.source-link:hover { background: var(--c-vegan-bg); transform: translateY(-1px); }
+
+/* calendar */
+.cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding: 0 4px; }
+#calendar-title { font-size: 16px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin: 0; color: var(--text-muted); }
+
+.nav-btn {
+    background: transparent; border: none; color: var(--text-main);
+    cursor: pointer; padding: 4px; border-radius: 8px; opacity: 0.6; transition: 0.2s;
+}
+.nav-btn:hover { background: rgba(0,0,0,0.05); opacity: 1; }
+
+.weekday-labels { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 12px; text-align: center; }
+.weekday-labels span { font-size: 10px; font-weight: 800; color: var(--text-muted); opacity: 0.5; }
+
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+
+.day {
+    aspect-ratio: 1; border-radius: 35%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 600; color: var(--text-main);
+    background: var(--day-empty-bg); border: 1px solid var(--day-empty-border);
+    cursor: pointer; transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    position: relative;
+}
+
+.day.vegan { background: var(--c-vegan); border-color: transparent; color: #fff; box-shadow: 0 4px 10px rgba(58, 90, 64, 0.2); }
+.day.veggie { background: var(--c-veggie); border-color: transparent; color: #5C4D18; }
+.day.meat { background: var(--c-meat); border-color: transparent; color: #fff; }
+.day.today::after {
+    content: ''; position: absolute; inset: -3px;
+    border: 2px solid var(--text-main); border-radius: 40%;
+    animation: pulse 2s infinite;
+}
+.day:hover { transform: scale(1.15); z-index: 2; border-color: var(--primary); }
+
+/* streak badge */
+.streak-container { display: flex; justify-content: center; margin-top: 0; padding-bottom: 10px; }
+.streak-badge {
+    background: var(--surface); backdrop-filter: blur(12px);
+    border: 1px solid var(--surface-border);
+    padding: 12px 24px; border-radius: 100px;
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 800; font-size: 14px;
+    box-shadow: 0 10px 25px var(--shadow);
+    color: var(--text-main); cursor: pointer;
+    transition: transform 0.2s;
+}
+.streak-badge:active { transform: scale(0.95); }
+.icon-flame { color: var(--c-meat); }
+
+/* modals */
+.modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+    display: grid; place-items: center; padding: 20px;
+    opacity: 1; transition: opacity 0.3s;
+}
+.modal-overlay.hidden { opacity: 0; pointer-events: none; }
+
+.modal {
+    background: var(--bg-color); width: 100%; max-width: 340px;
+    border-radius: 32px; padding: 24px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    transform: translateY(0); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.hidden .modal { transform: translateY(40px); }
+
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.modal-header h3 { margin: 0; font-size: 18px; font-weight: 800; }
+.close-btn { background: none; border: none; cursor: pointer; color: var(--text-muted); padding: 8px; }
+
+/* status picker */
+.status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.status-btn {
+    border: none; padding: 20px; border-radius: 20px;
+    font-family: 'Google Sans Flex'; font-size: 14px; font-weight: 700;
+    cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 8px;
+    transition: transform 0.2s, filter 0.2s;
+}
+.status-btn:active { transform: scale(0.95); }
+.status-btn .emoji { font-size: 24px; }
+.status-btn.vegan { background: var(--c-vegan-bg); color: var(--c-vegan); }
+.status-btn.veggie { background: var(--c-veggie-bg); color: #7A6620; }
+.status-btn.meat { background: var(--c-meat-bg); color: var(--c-meat); }
+.status-btn.reset { background: var(--surface); color: var(--text-muted); grid-column: span 2; flex-direction: row; justify-content: center; padding: 16px;}
+
+/* modal body */
+.modal-body { display: flex; flex-direction: column; gap: 16px; text-align: left; }
+
+/* impact grid */
+.impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.impact-item {
+    background: var(--surface); border: 1px solid var(--surface-border);
+    border-radius: 20px; padding: 16px;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px;
+}
+.impact-icon { font-size: 24px; margin-bottom: 4px; }
+.impact-val { font-size: 22px; font-weight: 900; color: var(--primary); }
+.impact-label { font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.6; }
+
+.privacy-box {
+    background: var(--c-meat-bg); border-radius: 16px; padding: 16px;
+    display: flex; gap: 12px; align-items: flex-start;
+}
+.privacy-icon { color: var(--c-meat); font-size: 20px; flex-shrink: 0; margin-top: 2px;}
+.note { font-size: 12px; color: var(--text-main); margin: 0; opacity: 0.9; line-height: 1.5; }
+
+.action-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.action-btn {
+    border: none; padding: 16px; border-radius: 16px; width: 100%;
+    font-weight: 700; font-family: 'Google Sans Flex'; font-size: 14px;
+    cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
+    transition: transform 0.2s;
+}
+.action-btn.primary { background: var(--surface); color: var(--text-main); border: 1px solid var(--surface-border); }
+.action-btn.secondary { background: var(--surface); color: var(--text-main); border: 1px solid var(--surface-border); }
+.danger-link {
+    background: none; border: none; color: var(--c-meat);
+    font-weight: 700; font-size: 12px; margin-top: 8px; cursor: pointer;
+    text-decoration: underline; opacity: 0.7; width: 100%; text-align: center;
+}
+
+.external-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600;
+    padding: 8px 12px; border-radius: 10px; transition: background 0.2s;
+}
+.external-link:hover { background: var(--c-vegan-bg); }
+
+/* animations */
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+@keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.1); } 100% { opacity: 1; transform: scale(1); } }
+
+.fade-in { animation: fadeIn 0.8s ease backwards; }
+.slide-down { animation: slideDown 0.6s ease backwards; }
+.floating { animation: float 5s ease-in-out infinite; }
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+
+@media (min-width: 600px) {
+    .app-wrapper { justify-content: center; padding: 40px 24px; }
+}
+        </style>
         <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js" defer></script>
-        <script src="script.js?v=0.5" defer></script>
     </head>
 <body>
 
@@ -32,10 +309,10 @@
             <p class="slogan">For those trying to be better humans.</p>
         </div>
         <div class="header-controls">
-            <button class="icon-btn" id="btn-stats" aria-label="My Impact">
-                <span class="material-symbols-rounded">bar_chart</span>
+            <button class="icon-btn" id="btn-about" aria-label="About Sprout">
+                <span class="material-symbols-rounded">info</span>
             </button>
-            <button class="icon-btn" id="btn-info" aria-label="Settings">
+            <button class="icon-btn" id="btn-settings" aria-label="Settings">
                 <span class="material-symbols-rounded">settings</span>
             </button>
             <button class="icon-btn" id="btn-theme" aria-label="Toggle Theme">
@@ -79,6 +356,7 @@
     </div>
 </main>
 
+<!-- date editor modal -->
 <div id="editor-overlay" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal mini-modal">
         <div class="modal-header">
@@ -102,6 +380,7 @@
     </div>
 </div>
 
+<!-- stats modal -->
 <div id="stats-overlay" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal mini-modal">
         <div class="modal-header">
@@ -136,12 +415,10 @@
             </div>
 
             <div class="stats-footer" style="margin-top: 20px;">
-                <p class="source-info" style="font-size: 11px; line-height: 1.4; opacity: 0.8; margin-bottom: 8px;">
-                    <strong>Note on calculation:</strong>
-                    These figures represent conservative minimum estimates based on scientific studies.
-                    The actual environmental impact is often significantly higher in global averages.
+                <p class="note" style="font-size: 11px; line-height: 1.4; opacity: 0.7; margin-bottom: 8px;">
+                    <strong>Note on calculation:</strong> These figures represent conservative minimum estimates based on scientific studies. The actual environmental impact is often significantly higher in global averages.
                 </p>
-                <p class="source-list" style="font-size: 10px; opacity: 0.5;">
+                <p style="font-size: 10px; opacity: 0.4; margin: 0;">
                     Sources: Water Footprint Network, Cowspiracy & Oxford University Study (Poore & Nemecek)
                 </p>
             </div>
@@ -149,19 +426,18 @@
     </div>
 </div>
 
-<div id="info-overlay" class="modal-overlay hidden" aria-hidden="true">
+<!-- settings modal -->
+<div id="settings-overlay" class="modal-overlay hidden" aria-hidden="true">
     <div class="modal mini-modal">
         <div class="modal-header">
-            <h3>Settings & About</h3>
-            <button class="close-btn" id="close-info"><span class="material-symbols-rounded">close</span></button>
+            <h3>Settings</h3>
+            <button class="close-btn" id="close-settings"><span class="material-symbols-rounded">close</span></button>
         </div>
         <div class="modal-body">
             <div class="privacy-box">
                 <span class="material-symbols-rounded privacy-icon">warning</span>
                 <p class="note">
-                    <strong>Important:</strong> All data is stored locally on this device.
-                    If you clear your browser data or switch devices, your history will be lost.
-                    Please export a backup regularly!
+                    <strong>Important:</strong> All data is stored locally on this device. If you clear your browser data or switch devices, your history will be lost. Please export a backup regularly.
                 </p>
             </div>
 
@@ -175,27 +451,413 @@
                 </label>
             </div>
 
-            <button id="btn-wipe" class="danger-link" style="margin-top: 10px; margin-bottom: 5px; opacity: 0.7;">
+            <button id="btn-wipe" class="danger-link" style="margin-top: 10px; opacity: 0.7;">
                 Reset Everything
             </button>
+        </div>
+    </div>
+</div>
 
-            <hr style="border: none; border-top: 1px solid var(--surface-border); margin: 20px 0;">
-
-            <div class="about-section" style="text-align: left;">
-                <h4 style="margin-bottom: 8px; font-size: 15px; color: var(--text-main);">About Sprout</h4>
-                <p style="font-size: 12px; line-height: 1.5; color: var(--text-dim);">
+<!-- about modal -->
+<div id="about-overlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal mini-modal">
+        <div class="modal-header">
+            <h3>About Sprout</h3>
+            <button class="close-btn" id="close-about"><span class="material-symbols-rounded">close</span></button>
+        </div>
+        <div class="modal-body">
+            <div style="text-align: left;">
+                <p style="font-size: 13px; line-height: 1.6; color: var(--text-main); margin-bottom: 16px;">
                     Sprout is a passion project designed to visualize the positive impact of a vegan lifestyle.
                 </p>
 
-                <ul style="font-size: 11px; line-height: 1.5; padding-left: 16px; margin-top: 10px; margin-bottom: 0; color: var(--text-dim);">
-                    <li style="margin-bottom: 6px;"><strong>Conservative Stats:</strong> We use minimum estimates from scientific studies.</li>
-                    <li><strong>Verified Data:</strong> Every daily insight is backed by high-quality research (WHO, FAO, Oxford).</li>
-                    <p style="font-size: 9px; opacity: 0.3; margin-top: 15px; text-align: center;">Version v0.5</p>
+                <ul style="font-size: 12px; line-height: 1.6; padding-left: 18px; margin: 0 0 20px 0; color: var(--text-dim);">
+                    <li style="margin-bottom: 8px;"><strong>Conservative Stats:</strong> We use minimum estimates from scientific studies.</li>
+                    <li style="margin-bottom: 8px;"><strong>Verified Data:</strong> Every daily insight is backed by high-quality research (WHO, FAO, Oxford).</li>
                 </ul>
+
+                <hr style="border: none; border-top: 1px solid var(--surface-border); margin: 20px 0;">
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <a href="https://github.com/chrissitxt/sprout.app" target="_blank" class="external-link">
+                        <span class="material-symbols-rounded" style="font-size: 18px;">code</span>
+                        View on GitHub
+                    </a>
+                    <a href="https://chrissitxt.me/" target="_blank" class="external-link">
+                        <span class="material-symbols-rounded" style="font-size: 18px;">person</span>
+                        Portfolio
+                    </a>
+                </div>
+
+                <p style="font-size: 9px; opacity: 0.3; margin-top: 20px; text-align: center;">Version v0.6</p>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // configuration
+    const CONFIG = {
+        storageKey: 'sprout_data',
+        themeKey: 'sprout_theme',
+        messages: [
+            { text: "Piglets in factory farms often undergo painful procedures like tail docking without any anesthesia or pain relief.", src: "https://pubmed.ncbi.nlm.nih.gov/32244333/" },
+            { text: "In the dairy industry, calves are typically separated from their mothers within hours of birth, causing significant distress.", src: "https://www.sciencedirect.com/science/article/pii/S002203021930103X" },
+            { text: "Cows form close friendships and show signs of stress when separated from preferred companions.", src: "https://pubmed.ncbi.nlm.nih.gov/21652434/" },
+            { text: "Chickens can recognize over 100 individual faces and demonstrate complex emotional responses.", src: "https://pubmed.ncbi.nlm.nih.gov/28054366/" },
+            { text: "Pigs are capable of complex problem-solving and outperform dogs in some cognitive tasks.", src: "https://pubmed.ncbi.nlm.nih.gov/27233261/" },
+            { text: "Fish experience pain and exhibit neurological responses similar to mammals when harmed.", src: "https://pubmed.ncbi.nlm.nih.gov/24581454/" },
+            { text: "Chickens bred for meat grow so fast that their legs often break under their own weight before they reach 6 weeks of age.", src: "https://pubmed.ncbi.nlm.nih.gov/31156453/" },
+            { text: "Octopuses use tools, solve puzzles, and have both short- and long-term memory.", src: "https://pubmed.ncbi.nlm.nih.gov/23471018/" },
+            { text: "In many countries, male chicks in the egg industry are culled immediately after hatching as they cannot lay eggs.", src: "https://www.europarl.europa.eu/news/en/headlines/society/20210603STO05412/animal-welfare-and-protection-eu-laws-explained" },
+            { text: "A vegan diet can reduce an individual's food-related carbon footprint by up to 73%.", src: "https://www.science.org/doi/10.1126/science.aaq0216" },
+            { text: "Animal agriculture is responsible for around 14.5% of global greenhouse gas emissions.", src: "https://www.fao.org/news/story/en/item/197623/icode/" },
+            { text: "Producing 1kg of beef requires approx. 15,415 liters of water, while 1kg of vegetables requires only about 322 liters.", src: "https://waterfootprint.org/en/resources/water-footprint-statistics/" },
+            { text: "If everyone shifted to a plant-based diet, global farmland use could be reduced by over 75%.", src: "https://www.science.org/doi/10.1126/science.aaq0216" },
+            { text: "The livestock sector is a primary driver of deforestation, particularly in the Amazon.", src: "https://www.fao.org/3/a0701e/a0701e00.htm" },
+            { text: "Industrial fishing nets make up nearly 50% of the plastic in the 'Great Pacific Garbage Patch'.", src: "https://www.nature.com/articles/s41598-018-22939-w" },
+            { text: "Most global soy production (around 77%) is used to feed livestock, not humans.", src: "https://ourworldindata.org/soy" },
+            { text: "The WHO classifies processed meats like bacon and ham as Group 1 carcinogens, the same category as tobacco.", src: "https://www.iarc.who.int/news-events/iarc-monographs-evaluate-consumption-of-red-meat-and-processed-meat/" },
+            { text: "A whole-food plant-based diet is the only eating pattern proven to reverse advanced heart disease.", src: "https://pubmed.ncbi.nlm.nih.gov/25198208/" },
+            { text: "Over 70% of all antibiotics globally are used on farm animals, contributing to antibiotic-resistant superbugs.", src: "https://www.who.int/news/item/07-11-2017-stop-using-antibiotics-in-healthy-animals-to-prevent-the-spread-of-antibiotic-resistance" },
+            { text: "Well-planned vegan diets are nutritionally adequate for all stages of life, according to major dietetic associations.", src: "https://pubmed.ncbi.nlm.nih.gov/27886704/" },
+            { text: "We already grow enough food to feed 10 billion people, but much is diverted to livestock feed.", src: "https://news.cornell.edu/stories/1997/08/us-could-feed-800-million-people-grain-livestock-eat" },
+            { text: "Plant-based diets are associated with a significantly lower risk of developing Type 2 diabetes.", src: "https://pubmed.ncbi.nlm.nih.gov/31329220/" },
+            { text: "Feeding crops to animals wastes the majority of their calories and protein during conversion.", src: "https://iopscience.iop.org/article/10.1088/1748-9326/8/3/034015" }
+        ]
+    };
+
+    // conservative minimum estimates per day (vegan vs. standard diet)
+    // sources: water footprint network, cowspiracy, poore & nemecek (oxford)
+    const IMPACT_FACTORS = {
+        animals: 0.1,   // min: 1 animal life saved per 10 days
+        water: 2700,    // min: liters saved (lower end of grain-fed beef vs plant protein)
+        co2: 2.5,       // min: kg of co2 equivalent (direct production emissions only)
+        forest: 1.5     // min: m² of forest/land spared from feed-crop conversion
+    };
+
+    // state management
+    let state = { history: {} };
+    let viewDate = new Date();
+    let selectedDateKey = null;
+
+    // dom elements
+    const els = {
+        grid: document.getElementById('calendar-grid'),
+        monthTitle: document.getElementById('calendar-title'),
+        streakLabel: document.getElementById('streak-label'),
+        quote: document.getElementById('quote'),
+        sourceLink: document.getElementById('source-link'),
+        sourceTag: document.getElementById('source-tag'),
+        timer: document.getElementById('timer'),
+        metaTheme: document.getElementById('meta-theme-color'),
+        themeIcon: document.querySelector('#btn-theme span'),
+
+        // modals
+        editor: document.getElementById('editor-overlay'),
+        settings: document.getElementById('settings-overlay'),
+        stats: document.getElementById('stats-overlay'),
+        about: document.getElementById('about-overlay'),
+        editorDateTitle: document.getElementById('editor-date'),
+
+        // stats
+        totalDaysCount: document.getElementById('total-days-count'),
+        statVals: document.querySelectorAll('.impact-val')
+    };
+
+    // initialization
+    function init() {
+        loadData();
+        loadTheme();
+        updateDailyInsight();
+        renderCalendar();
+        startTimer();
+        setupEventListeners();
+    }
+
+    // core functions
+    function loadData() {
+        const raw = localStorage.getItem(CONFIG.storageKey);
+        if (raw) {
+            try { state = JSON.parse(raw); } catch (e) { console.error("data corruption", e); }
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem(CONFIG.storageKey, JSON.stringify(state));
+        renderCalendar();
+    }
+
+    function getDateKey(date) {
+        const d = new Date(date);
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function renderCalendar() {
+        els.grid.innerHTML = '';
+        const year = viewDate.getFullYear();
+        const month = viewDate.getMonth();
+
+        const monthName = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(viewDate);
+        els.monthTitle.innerText = `${monthName} ${year}`;
+
+        const firstDayOfMonth = new Date(year, month, 1);
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        let startDay = firstDayOfMonth.getDay();
+        startDay = startDay === 0 ? 6 : startDay - 1;
+
+        const todayKey = getDateKey(new Date());
+
+        // empty cells before month starts
+        for (let i = 0; i < startDay; i++) {
+            els.grid.appendChild(document.createElement('div'));
+        }
+
+        // render days
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dateObj = new Date(year, month, d);
+            const key = getDateKey(dateObj);
+            const status = state.history[key];
+
+            const cell = document.createElement('div');
+            cell.className = `day ${status || ''}`;
+            cell.innerText = d;
+
+            if (key === todayKey) cell.classList.add('today');
+            cell.style.animationDelay = `${d * 0.01}s`;
+            cell.addEventListener('click', () => openEditor(key));
+            els.grid.appendChild(cell);
+        }
+        calculateStreak();
+    }
+
+    function updateDailyInsight() {
+        const now = new Date();
+        const dateSeed = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+        let hash = 0;
+        for (let i = 0; i < dateSeed.length; i++) {
+            hash = ((hash << 5) - hash) + dateSeed.charCodeAt(i);
+            hash |= 0;
+        }
+        const index = Math.abs(hash) % CONFIG.messages.length;
+        const msg = CONFIG.messages[index];
+        els.quote.innerText = msg.text;
+        els.sourceLink.href = msg.src;
+    }
+
+    function calculateStreak() {
+        let streak = 0;
+        let d = new Date();
+        const todayKey = getDateKey(d);
+        if (!state.history[todayKey]) d.setDate(d.getDate() - 1);
+
+        while (true) {
+            const key = getDateKey(d);
+            if (state.history[key] === 'vegan') {
+                streak++;
+                d.setDate(d.getDate() - 1);
+            } else { break; }
+        }
+        els.streakLabel.innerText = `${streak} Day Vegan Streak`;
+    }
+
+    function calculateImpact() {
+        const totalVeganDays = Object.values(state.history).filter(s => s === 'vegan').length;
+        els.totalDaysCount.innerText = totalVeganDays;
+
+        els.statVals.forEach(el => {
+            const metric = el.dataset.metric;
+            const factor = IMPACT_FACTORS[metric];
+            const finalValue = Math.floor(totalVeganDays * factor);
+            animateValue(el, 0, finalValue, 1500);
+        });
+    }
+
+    function animateValue(obj, start, end, duration) {
+        let startTimestamp = null;
+        const step = (timestamp) => {
+            if (!startTimestamp) startTimestamp = timestamp;
+            const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+            const easeOut = 1 - Math.pow(1 - progress, 3);
+            obj.innerText = Math.floor(progress * (end - start) + start).toLocaleString();
+            if (progress < 1) {
+                window.requestAnimationFrame(step);
+            }
+        };
+        window.requestAnimationFrame(step);
+    }
+
+    function startTimer() {
+        let lastDay = new Date().getDate();
+        function tick() {
+            const now = new Date();
+            const tomorrow = new Date(now);
+            tomorrow.setHours(24, 0, 0, 0);
+            if (now.getDate() !== lastDay) {
+                lastDay = now.getDate();
+                updateDailyInsight();
+            }
+            const diff = tomorrow - now;
+            const h = String(Math.floor(diff / (1000 * 60 * 60))).padStart(2, '0');
+            const m = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+            els.timer.innerText = `${h}h ${m}m left`;
+        }
+        tick();
+        setInterval(tick, 60000);
+    }
+
+    // interaction
+    function openEditor(key) {
+        selectedDateKey = key;
+        const dateObj = new Date(key);
+        els.editorDateTitle.innerText = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+        openModal(els.editor);
+    }
+
+    function openStats() {
+        calculateImpact();
+        openModal(els.stats);
+    }
+
+    function openModal(modal) {
+        modal.classList.remove('hidden');
+        modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function setStatus(status) {
+        if (!selectedDateKey) return;
+        if (status === 'reset') delete state.history[selectedDateKey];
+        else state.history[selectedDateKey] = status;
+        saveData();
+        closeModals();
+        if (status === 'vegan') triggerConfetti();
+    }
+
+    function triggerConfetti() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const colors = isDark ? ['#9BC595', '#E3E8E3'] : ['#4A6741', '#D6E6D2'];
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.8 }, colors: colors, disableForReducedMotion: true });
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.classList.add('hidden');
+            el.setAttribute('aria-hidden', 'true');
+        });
+        selectedDateKey = null;
+    }
+
+    // theming & data
+    function loadTheme() {
+        const saved = localStorage.getItem(CONFIG.themeKey) || 'light';
+        document.documentElement.setAttribute('data-theme', saved);
+        updateThemeVisuals(saved);
+    }
+
+    function toggleTheme() {
+        const current = document.documentElement.getAttribute('data-theme');
+        const next = current === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem(CONFIG.themeKey, next);
+        updateThemeVisuals(next);
+    }
+
+    function updateThemeVisuals(theme) {
+        if (els.themeIcon) els.themeIcon.innerText = theme === 'light' ? 'dark_mode' : 'light_mode';
+        els.metaTheme.setAttribute('content', theme === 'dark' ? '#111411' : '#F1F0E8');
+    }
+
+    function exportData() {
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+        const anchor = document.createElement('a');
+        anchor.setAttribute("href", dataStr);
+        anchor.setAttribute("download", `sprout_backup_${getDateKey(new Date())}.json`);
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+    }
+
+    function importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const parsed = JSON.parse(event.target.result);
+                if (parsed.history) {
+                    state = parsed;
+                    saveData();
+                    alert("Import successful!");
+                    closeModals();
+                }
+            } catch (err) { alert("Invalid file"); }
+        };
+        reader.readAsText(file);
+    }
+
+    function wipeData() {
+        if(confirm("Are you sure? This will delete all your progress.")) {
+            state = { history: {} };
+            saveData();
+            closeModals();
+        }
+    }
+
+    // event listeners
+    function setupEventListeners() {
+        document.getElementById('btn-prev').onclick = () => { viewDate.setMonth(viewDate.getMonth() - 1); renderCalendar(); };
+        document.getElementById('btn-next').onclick = () => { viewDate.setMonth(viewDate.getMonth() + 1); renderCalendar(); };
+        document.getElementById('btn-about').onclick = () => openModal(els.about);
+        document.getElementById('btn-settings').onclick = () => openModal(els.settings);
+        document.getElementById('btn-streak-trigger').onclick = openStats;
+        document.getElementById('btn-theme').onclick = toggleTheme;
+
+        // modal closers
+        document.getElementById('close-editor').onclick = closeModals;
+        document.getElementById('close-settings').onclick = closeModals;
+        document.getElementById('close-stats').onclick = closeModals;
+        document.getElementById('close-about').onclick = closeModals;
+
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if(e.target === overlay) closeModals();
+            });
+        });
+
+        document.querySelectorAll('.status-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                setStatus(e.currentTarget.dataset.status);
+            });
+        });
+
+        document.getElementById('btn-export').onclick = exportData;
+        document.getElementById('btn-wipe').onclick = wipeData;
+        document.getElementById('import-file').onchange = importData;
+    }
+
+    init();
+});
+
+// service worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+            .then(reg => {
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    installingWorker.onstatechange = () => {
+                        if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            window.location.reload();
+                        }
+                    };
+                };
+            })
+            .catch(err => console.log('service worker failed: ', err));
+    });
+}
+</script>
 
 </body>
 </html>
