@@ -10,4 +10,4 @@ Sprout is built on the foundation of privacy and simplicity. Sprout does not use
 Sprout is designed specifically as a Progressive Web App (PWA). This architecture allows the app to be available on any device with a modern web browser without the need for an app store.
 
 ### Installation and Access
-To install Sprout on mobile, open the link in your browser and use the "Add to Home Screen" option found in your share or menu settings. On a desktop, you can simply click the install icon located in your browser's address bar.
+To install Sprout on mobile, open the link in your browser and use the "Add to Home Screen" option found in your share or menu settings. On desktop, you can simply click the install icon located in your browser's address bar.
